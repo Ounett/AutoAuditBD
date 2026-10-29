@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f7f8"><title>AutoAudit</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<section id="login-screen" class="login-screen hidden">
+  <div class="login-panel">
+    <div class="brand-row"><div class="brand-icon">BD<span>·</span></div><span>AutoAudit</span></div>
+    <div class="login-heading"><h1>Iniciar sesión</h1></div>
+    <form id="login-form">
+      <label>Usuario<input id="login-user" autocomplete="username" placeholder="Nombre de usuario" required></label>
+      <label>Contraseña<input id="login-pass" type="password" autocomplete="current-password" placeholder="Contraseña" required></label>
+      <button class="btn primary full" type="submit">Ingresar</button>
+    </form>
+    <p class="login-note">Primer inicio: la clave de <b>admin</b> se muestra en la terminal de VS Code.</p>
+  </div>
+  <footer class="login-footer">AutoAudit</footer>
+</section>
+<div id="app-shell" class="shell hidden">
+  <aside class="sidebar">
+    <div class="brand-row side-brand"><div class="brand-icon">A<span>·</span></div><div><b>AutoAudit</b><small></small></div></div>
+    <nav aria-label="Secciones">
+      <button class="nav-item active" data-page="dashboard">Resumen</button>
+      <button class="nav-item" data-page="records">Datos y tablas</button>
+      <button class="nav-item" data-page="audit">Auditorías</button>
+      <button class="nav-item" data-page="history">Historial</button>
+      <button class="nav-item admin-only" data-page="users">Usuarios</button>
+    </nav>
+    <div class="side-footer"><div class="connection"><i></i> PostgreSQL conectado</div><p>AutoAudit</p></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="top-path"><b id="current-title">Resumen</b></div>
+      <div class="top-actions"><span class="local-indicator"></span><button class="btn icon-only" id="reload" title="Actualizar">↻</button><span class="user-pill" id="current-user">Usuario</span><button class="btn quiet" id="profile">Contraseña</button><button class="btn quiet" id="logout">Salir</button></div>
+    </header>
+    <main class="content">
+      <section id="page-dashboard" class="page">
+        <div class="page-heading"><div><h1>Resumen</h1></div><button class="btn primary" data-goto="records">Ver tablas</button></div>
+        <div class="stat-grid">
+          <article class="stat-card"><span>Tablas</span><strong id="stat-tables">—</strong></article>
+          <article class="stat-card"><span>Auditorías activas</span><strong id="stat-active">—</strong><small>Triggers habilitados</small></article>
+          <article class="stat-card"><span>Reglas activas</span><strong id="stat-rules">—</strong><small>Por columna y evento</small></article>
+          <article class="stat-card"><span>Cambios</span><strong id="stat-events">—</strong></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="card"><div class="card-heading"><div><h2>Actividad reciente</h2></div><button class="btn quiet" data-goto="history">Ver todo</button></div><div class="table-scroll"><table><thead><tr><th>Operación</th><th>Tabla</th><th>Columna</th><th>Usuario</th><th>Fecha</th></tr></thead><tbody id="recent-body"></tbody></table></div></article>
+          <article class="card"><div class="card-heading"><div><h2>Operaciones</h2></div></div><div id="operations-chart" class="ops-chart"></div></article>
+        </div>
+      </section>
+      <section id="page-records" class="page hidden">
+        <div class="page-heading"><div><span class="overline">ADMINISTRACIÓN</span><h1>Datos y tablas</h1><p>Consultar registros, agregar, editar y eliminar.</p></div><button class="btn secondary admin-only" id="create-table">＋ Crear tabla</button></div>
+        <div class="data-layout">
+          <aside class="card tables-card"><div class="card-heading"><div><h2>Tablas</h2><p>Seleccionar una tabla.</p></div></div><div id="table-list" class="table-list"></div></aside>
+          <article class="card data-card"><div class="data-toolbar"><div><h2 id="selected-table">Seleccionar tabla</h2><p id="selected-count">Los datos aparecerán aquí.</p></div><div class="toolbar-actions"><button class="btn secondary admin-only hidden" id="add-column">＋ Columna</button><button class="btn danger-quiet admin-only hidden" id="delete-table">Eliminar tabla</button><button class="btn primary" id="add-record" disabled>＋ Nuevo registro</button></div></div>
+            <div class="table-scroll"><table><thead id="data-thead"></thead><tbody id="data-body"><tr><td class="empty">Seleccionar una tabla para consultar registros.</td></tr></tbody></table></div>
+            <div class="table-footer"><span id="data-count">—</span><div><button class="btn secondary small" id="prev-page">Anterior</button><span id="data-page">1</span><button class="btn secondary small" id="next-page">Siguiente</button></div></div>
+          </article>
+        </div>
+      </section>
+      <section id="page-audit" class="page hidden"><div class="page-heading"><div><span class="overline">CONFIGURACIÓN</span><h1>Auditorías</h1><p></p></div><button class="btn primary admin-only" id="new-audit">＋ Configurar auditoría</button></div><article class="card"><div class="card-heading"><div><h2>Tablas monitoreadas</h2><p>Estado de las reglas por tabla y columna.</p></div></div><div id="audit-list"></div></article></section>
+      <section id="page-history" class="page hidden"><div class="page-heading"><div><span class="overline">TRAZABILIDAD</span><h1>Historial de cambios</h1><p>C</p></div><button class="btn secondary" id="export-csv">↓ Exportar CSV</button></div><article class="card"><div class="filters"><label>Usuario<input id="filter-user" placeholder="Todos"></label><label>Tabla<input id="filter-table" placeholder="Todas"></label><label>Columna<input id="filter-column" placeholder="Todas"></label><label>Operación<select id="filter-op"><option value="">Todas</option><option>INSERT</option><option>UPDATE</option><option>DELETE</option></select></label><button class="btn primary" id="search-history">Buscar</button></div><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Operación</th><th>Tabla / columna</th><th>Anterior</th><th>Nuevo</th><th>Usuario</th><th></th></tr></thead><tbody id="history-body"></tbody></table></div><div class="table-footer"><span id="history-count"></span><span></span></div></article></section>
+      <section id="page-users" class="page hidden"><div class="page-heading"><div><span class="overline">ACCESO</span><h1>Usuarios</h1><p></p></div><button class="btn primary" id="new-user">＋ Crear usuario</button></div><article class="card"><div class="card-heading"><div><h2>Cuentas registradas</h2><p>El administrador gestiona auditorías y tablas; el usuario gestiona registros.</p></div></div><div class="table-scroll"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Registro</th><th></th></tr></thead><tbody id="users-body"></tbody></table></div></article></section>
+    </main>
+  </div>
+</div>
+<div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-box"><div class="modal-head"><div><h2 id="modal-title">Formulario</h2><p id="modal-subtitle"></p></div><button class="btn icon-only" id="close-modal" aria-label="Cerrar">×</button></div><div id="modal-content"></div><div class="modal-actions"><button class="btn secondary" id="cancel-modal">Cancelar</button><button class="btn primary" id="save-modal">Guardar</button></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

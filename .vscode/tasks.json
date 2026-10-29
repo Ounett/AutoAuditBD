@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AutoAudit: instalar e iniciar (1 comando)",
+      "type": "shell",
+      "command": "bash ./iniciar.sh",
+      "options": {"cwd": "${workspaceFolder}"},
+      "presentation": {"reveal": "always", "panel": "new"},
+      "problemMatcher": []
+    }
+  ]
+}
