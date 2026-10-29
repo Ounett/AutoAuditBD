@@ -4,7 +4,7 @@ La evidencia debe obtenerse ejecutando la aplicación en PostgreSQL 18. Este doc
 
 | ID | Prueba | Captura sugerida |
 |---|---|---|
-| F01 | Abrir `./iniciar.sh` y entrar con la cuenta admin de la web | Login y panel |
+| F01 | Abrir `./iniciar.sh` en Linux o `iniciar.bat` en Windows y entrar con la cuenta admin de la web | Login y panel |
 | F02 | En Datos y tablas abrir `demo.productos` | Tabla con filas |
 | F03 | Usar **Nuevo registro** y registrar un producto nuevo | Formulario y fila creada |
 | F04 | Cambiar el precio mediante **Editar** | Fila modificada |

@@ -2,21 +2,35 @@
 
 Aplicación local para administrar registros y auditar los cambios que ocurren en PostgreSQL 18. El proyecto usa Flask (Python), HTML/CSS/JavaScript sin frameworks de frontend y triggers `AFTER` en PL/pgSQL. La base se denomina `autoaudit_visual` y no modifica la antigua base `autoaudit_db`.
 
-## Inicio en VS Code — Linux Mint / Ubuntu
+## Inicio en VS Code — Linux, Windows y macOS
 
 1. Extraer el ZIP y abrir la carpeta **AutoAudit_Visual_Pro_Gestion** en Visual Studio Code.
 2. Abrir **Terminal → Nueva terminal**.
-3. Ejecutar:
+3. Ejecutar el iniciador según el sistema:
 
-   ```bash
-   ./iniciar.sh
-   ```
+   - **Linux:** `./iniciar.sh`
+   - **Windows:** doble clic en `iniciar.bat` o ejecutar `.\iniciar.bat` en PowerShell.
+   - **macOS:** ejecutar `python3 -m venv .venv`, instalar `requirements.txt` y después `python3 scripts/arrancar.py`.
 
-En el primer arranque se instalarán, si faltan, PostgreSQL 18, Python y sus bibliotecas. Se puede solicitar la contraseña **sudo** una vez para instalar/configurar PostgreSQL. El programa prepara la base y abre **http://127.0.0.1:5050** automáticamente.
+En Linux, el primer arranque puede instalar automáticamente PostgreSQL 18, Python y sus bibliotecas. En Windows y macOS se debe instalar PostgreSQL 18 y Python 3.11 o posterior previamente; el iniciador prepara el entorno virtual y las bibliotecas de Python. El programa prepara la base y abre **http://127.0.0.1:5050** automáticamente.
+
+### Windows
+
+La guía paso a paso, incluyendo cómo instalar PostgreSQL, iniciar su servicio desde `services.msc` o PowerShell, comprobar `psql` y resolver errores frecuentes, está en [Docs/01_INSTALACION.md](Docs/01_INSTALACION.md).
+
+Resumen rápido:
+
+1. Instalar Python 3.11+ y PostgreSQL 18.
+2. Iniciar el servicio `postgresql-x64-18`.
+3. Confirmar que `psql --version` funciona.
+4. Clonar este repositorio y abrir su carpeta.
+5. Ejecutar `.\iniciar.bat`.
+
+El iniciador solicitará la contraseña del usuario `postgres` únicamente durante la instalación inicial o una migración pendiente; no guarda esa contraseña.
 
 **Primer inicio de sesión:** revisar la terminal de VS Code. Allí aparecerá un usuario `admin` y una **contraseña temporal aleatoria**, solo al crear por primera vez el sistema de cuentas. La contraseña no se escribe en el código ni se almacena en texto plano. Debe cambiarse desde el botón **Contraseña** de la esquina superior derecha.
 
-**Siguientes arranques:** ejecutar únicamente `./iniciar.sh` y acceder con los usuarios de la aplicación. No es necesario volver a ingresar contraseñas de PostgreSQL. Para cerrar el servidor, usar `Ctrl+C` en la terminal.
+**Siguientes arranques:** ejecutar únicamente el iniciador correspondiente (`./iniciar.sh` o `iniciar.bat`) y acceder con los usuarios de la aplicación. No es necesario volver a ingresar contraseñas de PostgreSQL. Para cerrar el servidor, usar `Ctrl+C` en la terminal.
 
 ### Si ya se instaló AutoAudit Visual Pro anteriormente
 
@@ -27,7 +41,10 @@ La versión nueva detecta `.env` y la base `autoaudit_visual`. Aplica una migrac
 Desde la carpeta del proyecto, con acceso a la cuenta Linux propietaria de la instalación:
 
 ```bash
+# Linux/macOS:
 .venv/bin/python scripts/restablecer_admin.py
+# Windows:
+.venv\Scripts\python.exe scripts\restablecer_admin.py
 ```
 
 La nueva contraseña temporal se muestra únicamente en esa terminal. No se modifica PostgreSQL.
@@ -68,7 +85,7 @@ La nueva contraseña temporal se muestra únicamente en esa terminal. No se modi
 - `auth_local.py` — cuentas y contraseñas hash almacenadas localmente (SQLite protegido).
 - `Interfaz/static/` — interfaz visual responsive de colores neutros.
 - `Sql/01..12` — modelo, diccionario de datos, generador, consultas, seguridad y migraciones.
-- `scripts/arrancar.py` — instalador y ejecución de la interfaz.
+- `scripts/arrancar.py` — instalador lógico y ejecución multiplataforma de la interfaz.
 - `scripts/restablecer_admin.py` — recuperación local de contraseña.
 - `tests/` — comprobaciones automatizadas y prueba opcional de integración.
 

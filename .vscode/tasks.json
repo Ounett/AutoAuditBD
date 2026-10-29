@@ -5,6 +5,7 @@
       "label": "AutoAudit: instalar e iniciar (1 comando)",
       "type": "shell",
       "command": "bash ./iniciar.sh",
+      "windows": {"command": "${workspaceFolder}\\iniciar.bat"},
       "options": {"cwd": "${workspaceFolder}"},
       "presentation": {"reveal": "always", "panel": "new"},
       "problemMatcher": []

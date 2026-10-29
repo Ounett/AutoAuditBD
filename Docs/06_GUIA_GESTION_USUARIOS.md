@@ -2,7 +2,7 @@
 
 ## Inicio de la aplicación
 
-La aplicación se ejecuta desde VS Code con `./iniciar.sh`, abriendo `http://127.0.0.1:5050`. El primer acceso utiliza la cuenta administradora y la clave temporal impresa por el iniciador. La clave debe cambiarse desde **Contraseña**. No se utiliza la contraseña PostgreSQL para ingresar a la web.
+La aplicación se ejecuta desde VS Code con `./iniciar.sh` en Linux o `iniciar.bat` en Windows, abriendo `http://127.0.0.1:5050`. El primer acceso utiliza la cuenta administradora y la clave temporal impresa por el iniciador. La clave debe cambiarse desde **Contraseña**. No se utiliza la contraseña PostgreSQL para ingresar a la web.
 
 ## Crear y modificar registros
 

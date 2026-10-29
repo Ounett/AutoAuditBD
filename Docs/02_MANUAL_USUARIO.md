@@ -1,6 +1,6 @@
 # Manual de usuario — AutoAudit
 
-La aplicación se abre desde VS Code con `./iniciar.sh` y se usa en `http://127.0.0.1:5050`. El primer administrador inicia sesión con la clave temporal mostrada una sola vez en la terminal. Después se cambia esa clave desde el botón **Contraseña**.
+La aplicación se abre desde VS Code con `./iniciar.sh` en Linux o `iniciar.bat` en Windows y se usa en `http://127.0.0.1:5050`. El primer administrador inicia sesión con la clave temporal mostrada una sola vez en la terminal. Después se cambia esa clave desde el botón **Contraseña**.
 
 **Resumen:** estadísticas de configuración, auditorías y cambios registrados.
 
