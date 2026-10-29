@@ -1,5 +1,3 @@
--- AutoAudit Visual Pro - PostgreSQL 18. Ejecutar como postgres en una BASE NUEVA.
--- Modelo inspirado en la organización pública del repositorio balvaradod/AutoAudit.
 BEGIN;
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='auditoria_admin') THEN

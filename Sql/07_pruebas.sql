@@ -1,5 +1,3 @@
--- Prueba repetible sin borrar datos existentes. Ejecutar como postgres.
--- Genera evidencias reales en v_historial.
 SET application_name='AutoAudit_Casos_Prueba';
 DO $$
 DECLARE v_id BIGINT; v_antes BIGINT; v_despues BIGINT; v_token TEXT := 'PRUEBA-'||txid_current()::text;
@@ -14,7 +12,6 @@ BEGIN
     RAISE EXCEPTION 'Se esperaban 5 detalles auditados, hay %',v_despues-v_antes;
   END IF;
   IF NOT EXISTS(SELECT 1 FROM auditoria.v_historial WHERE registro_pk->>'producto_id'=v_id::text AND operacion='UPDATE' AND columna='precio' AND valor_anterior='5.00' AND valor_nuevo='7.00') THEN
-    -- NUMERIC convertido a JSONB puede salir como 5.00/7.00 o 5.0/7.0 dependiendo del dato.
     IF NOT EXISTS(SELECT 1 FROM auditoria.v_historial WHERE registro_pk->>'producto_id'=v_id::text AND operacion='UPDATE' AND columna='precio' AND (valor_anterior)::numeric=5 AND (valor_nuevo)::numeric=7) THEN
       RAISE EXCEPTION 'No se encontraron valores anterior/nuevo del UPDATE';
     END IF;

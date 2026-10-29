@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""Arranque sin pasos manuales: instala/configura una vez, luego abre localhost.
-
-IMPORTANTE: la clave de administrador se solicita solo en la primera instalacion
-cuando PostgreSQL no permite acceso administrativo sin autenticar. NUNCA se guarda.
-"""
 from __future__ import annotations
 
 import getpass
@@ -44,23 +39,12 @@ SQL_FILES = (
 
 def admin_psql(sql: str | None = None, *, database: str = "postgres",
                password: str = "", script: Path | None = None) -> str:
-    """Ejecutar psql sin contrasena en la linea de comandos ni en el historial.
-
-    Usa PGPASSWORD solo en el proceso hijo. -w evita multiples peticiones.
-    """
     if USE_LOCAL_PEER:
-        # Autorizacion administrativa local via sudo + peer (predeterminada
-        # al instalar PostgreSQL en Ubuntu/Mint). No exige clave de postgres.
         cmd = ["sudo", "-n", "-u", "postgres", "psql", "-X", "-w",
                "-p", PG_PORT, "-d", database, "-v", "ON_ERROR_STOP=1", "-At"]
     else:
         cmd = ["psql", "-X", "-w", "-h", PG_HOST, "-p", PG_PORT, "-U", "postgres",
                "-d", database, "-v", "ON_ERROR_STOP=1", "-At"]
-    # SIEMPRE transmitir el SQL por stdin. El usuario del sistema "postgres"
-    # normalmente NO puede atravesar /home/<usuario>/Descargas (chmod 700).
-    # Con -f <ruta> fallaba con "Permiso denegado" pese a tener acceso a PostgreSQL.
-    # El archivo se lee con el usuario que ejecuta AutoAudit, ANTES de sudo -u postgres.
-    # PostgreSQL recibe el contenido como stdin, sin abrir rutas del directorio personal.
     cmd.extend(["-f", "-"])
     if script is not None:
         try:
@@ -75,7 +59,6 @@ def admin_psql(sql: str | None = None, *, database: str = "postgres",
     env.pop("PGSERVICE", None)
     env.pop("PGDATABASE", None)
     if USE_LOCAL_PEER:
-        # No permitir que variables PG* heredadas cambien a TCP u otro rol.
         env.pop("PGHOST", None)
         env.pop("PGUSER", None)
         env.pop("PGPORT", None)
@@ -105,7 +88,6 @@ def check_current_connection() -> bool:
 
 
 def write_env(app_password: str) -> None:
-    # La contrasena automatica solo usa hexadecimal: no requiere escapes URL.
     contenido = (f"DATABASE_URL=postgresql://{APP_ROLE}:{app_password}@{PG_HOST}:{PG_PORT}/{DB_NAME}\n"
                  "AUTOAUDIT_HOST=127.0.0.1\nAUTOAUDIT_PORT=5050\n")
     tmp = ENV_FILE.with_name(".env.tmp")
@@ -121,15 +103,10 @@ def write_env(app_password: str) -> None:
 
 
 def try_local_peer() -> bool:
-    """Intentar administracion de la instancia local mediante sudo/peer.
-
-    Se usa sudo para autorizar la instalacion; no se deshabilita autenticacion.
-    """
     global USE_LOCAL_PEER
     if not shutil.which("sudo"):
         return False
     try:
-        # Si no hay sudo en cache, puede pedir la clave de Linux una vez.
         print("[INFO] Intentando administrar PostgreSQL con sudo local...", flush=True)
         subprocess.run(["sudo", "-v"], check=True, timeout=90)
         USE_LOCAL_PEER = True
@@ -209,20 +186,17 @@ GRANT CONNECT ON DATABASE {DB_NAME} TO {APP_ROLE};
             print(f"[OK] Usuario de la aplicacion probado ({cur.fetchone()[0]} tablas configuradas).")
 
     write_env(app_password)
-    # Evitar retener innecesariamente una copia adicional de la clave administrativa.
     password = ""
     print("[OK] Credenciales locales guardadas en .env (permisos 600).")
     print("[OK] La proxima vez solo sera necesario: ./iniciar.sh\n")
 
 
 def migrate_existing() -> None:
-    """Primera ejecución de esta versión sobre una base ya existente."""
     marker=BASE / '.local' / 'gestion_migrated_v1'
     if marker.exists():
         return
     print('[INFO] Actualizando permisos de edición y contexto de usuarios...')
     if not try_local_peer():
-        # Solo se solicita la credencial de PostgreSQL si no hay autenticación peer.
         key=getpass.getpass('Clave administrador postgres para actualización inicial: ')
     else:
         key=''

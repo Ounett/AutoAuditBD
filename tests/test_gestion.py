@@ -1,4 +1,3 @@
-"""Controles estáticos de componentes; no sustituyen la prueba SQL real."""
 import ast
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]

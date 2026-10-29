@@ -1,7 +1,3 @@
-"""Cuentas de la interfaz (distintas de los roles técnicos de PostgreSQL).
-
-La base SQLite local y la clave de cookies no se publican ni forman parte del ZIP.
-"""
 from __future__ import annotations
 import os
 import re

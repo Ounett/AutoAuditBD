@@ -1,6 +1,3 @@
-"""Prueba integrada opt-in. Ejecutar solo en la base de PRUEBAS ya instalada.
-AUTOAUDIT_INTEGRATION=1 .venv/bin/python -m pytest tests -v
-"""
 import os
 import pytest
 

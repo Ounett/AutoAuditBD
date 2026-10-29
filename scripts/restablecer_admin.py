@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recuperación local para una instalación de práctica. No requiere postgres."""
+
 import secrets
 import sys
 from pathlib import Path

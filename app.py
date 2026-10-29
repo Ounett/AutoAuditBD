@@ -1,6 +1,3 @@
-"""AutoAudit Visual Pro: servidor local Flask / PostgreSQL 18.
-La interfaz se mantiene ligada a localhost por defecto. No publicar sin autenticación externa.
-"""
 from __future__ import annotations
 
 import csv
@@ -232,7 +229,6 @@ def exportar():
 
 @app.errorhandler(Exception)
 def error(err):
-    # Jamás exponer DSN ni trazas; los mensajes PostgreSQL de validación se muestran parcialmente.
     from werkzeug.exceptions import HTTPException
     if isinstance(err,HTTPException):
         return jsonify({"error":err.description}),err.code

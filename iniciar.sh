@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# AutoAudit: un comando de inicio para Ubuntu y Linux Mint.
-# Primera vez: instala Python y PostgreSQL 18 si hacen falta.
-# No elimina otras bases ni clústeres PostgreSQL existentes.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -29,7 +26,6 @@ instalar_postgresql18_si_falta() {
         echo 'ERROR: instalar PostgreSQL 18 manualmente. Este instalador admite Ubuntu/Linux Mint.' >&2
         exit 1
     fi
-    # En Mint 22.x, UBUNTU_CODENAME=noble (no usar su propio nombre de lanzamiento).
     . /etc/os-release
     case "${ID:-}" in
         ubuntu|linuxmint) ;;
@@ -44,12 +40,10 @@ instalar_postgresql18_si_falta() {
     echo "[INFO] PostgreSQL 18 no esta instalado. Preparando paquetes para Ubuntu $CODENAME..."
     sudo apt-get update
     if ! apt-cache show postgresql-18 >/dev/null 2>&1; then
-        # Metodo oficial PGDG con clave restringida (no usar apt-key).
         sudo apt-get install -y curl ca-certificates
         sudo install -d -m 755 /usr/share/postgresql-common/pgdg
         sudo curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
           -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
-        # No crear fuentes duplicadas cuando ya hay configuracion PGDG.
         if ! grep -Rql 'apt.postgresql.org/pub/repos/apt' /etc/apt/sources.list.d /etc/apt/sources.list 2>/dev/null; then
             printf 'Types: deb\nURIs: https://apt.postgresql.org/pub/repos/apt\nSuites: %s-pgdg\nArchitectures: %s\nComponents: main\nSigned-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc\n' \
               "$CODENAME" "$(dpkg --print-architecture)" | sudo tee /etc/apt/sources.list.d/pgdg.sources >/dev/null

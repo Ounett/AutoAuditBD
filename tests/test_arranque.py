@@ -1,4 +1,3 @@
-"""Pruebas del arranque, SIN requerir una instancia real de PostgreSQL."""
 from pathlib import Path
 import importlib.util
 import os
@@ -8,7 +7,6 @@ from unittest import mock
 
 
 def load_module(monkeypatch):
-    # Los dobles permiten probar el arranque aun antes de instalar dependencias.
     fake_dotenv = types.ModuleType("dotenv")
     fake_dotenv.dotenv_values = lambda p: dict(line.strip().split("=", 1)
                     for line in Path(p).read_text().splitlines()
@@ -136,7 +134,6 @@ def test_local_peer_is_used_without_postgres_password(tmp_path, monkeypatch):
 
 
 def test_peer_sql_script_is_sent_over_stdin_instead_of_opened_as_postgres(tmp_path, monkeypatch):
-    """Regression: sudo -u postgres cannot read scripts in private /home folders."""
     mod = load_module(monkeypatch)
     sqlfile = tmp_path / "01_estructura.sql"
     sqlfile.write_text("CREATE SCHEMA IF NOT EXISTS auditoria;", encoding="utf-8")

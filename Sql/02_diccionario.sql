@@ -1,4 +1,3 @@
--- Catálogo y diccionario PostgreSQL. Las tablas internas se excluyen.
 CREATE OR REPLACE VIEW auditoria.v_diccionario AS
 SELECT n.nspname::text AS esquema, c.relname::text AS tabla,
        a.attname::text AS columna, format_type(a.atttypid,a.atttypmod) AS tipo,

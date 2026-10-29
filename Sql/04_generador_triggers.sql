@@ -1,5 +1,3 @@
--- El generador construye exclusivamente identificadores previamente validados.
--- Un trigger AFTER por tabla, con función compartida de captura.
 CREATE OR REPLACE FUNCTION auditoria.capturar_cambio() RETURNS TRIGGER
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog, auditoria, pg_temp AS $$
 DECLARE
@@ -41,7 +39,6 @@ BEGIN
   LOOP
     v_val_old := CASE WHEN v_old IS NULL THEN NULL ELSE v_old->v_item.columna END;
     v_val_new := CASE WHEN v_new IS NULL THEN NULL ELSE v_new->v_item.columna END;
-    -- Los UPDATE sin cambio real no se registran.
     IF TG_OP <> 'UPDATE' OR v_val_old IS DISTINCT FROM v_val_new THEN
       INSERT INTO auditoria.usuario_auditado(nombre_usuario) VALUES(COALESCE(NULLIF(current_setting('autoaudit.actor',true),''), session_user))
       ON CONFLICT(nombre_usuario) DO UPDATE SET nombre_usuario=EXCLUDED.nombre_usuario

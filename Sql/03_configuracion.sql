@@ -1,4 +1,3 @@
--- Funciones administrativas. Se crean con propietario postgres en la instalación.
 CREATE OR REPLACE FUNCTION auditoria.comprobar_admin() RETURNS void
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog, auditoria, pg_temp AS $$
 BEGIN
@@ -34,7 +33,6 @@ BEGIN
   END LOOP;
   INSERT INTO auditoria.tabla_auditada(esquema,nombre_tabla,activa) VALUES(p_esquema,p_tabla,TRUE)
   ON CONFLICT(esquema,nombre_tabla) DO UPDATE SET activa=TRUE RETURNING id_tabla INTO v_id;
-  -- Lo no seleccionado se desactiva; el historial previo y su configuración se preservan.
   UPDATE auditoria.configuracion_auditoria cfg SET activo=FALSE,fecha_cambio=now()
     FROM auditoria.columna_auditada ca WHERE cfg.id_columna=ca.id_columna AND ca.id_tabla=v_id;
   FOREACH v_col IN ARRAY p_columnas LOOP

@@ -1,6 +1,3 @@
-"""Login, cuentas, permisos y CRUD visual para AutoAudit Visual.
-El servidor Flask siempre escucha en 127.0.0.1, no en interfaces públicas.
-"""
 from __future__ import annotations
 import hmac
 import re
